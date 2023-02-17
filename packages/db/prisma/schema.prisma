@@ -10,12 +10,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id      String @id @default(cuid())
-    title   String
-    content String
-}
-
 // NextAuth.js Models
 // NOTE: When using postgresql, mysql or sqlserver, 
 // uncomment the @db.Text annotations below
@@ -62,4 +56,27 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Track {
+    id          String   @id @default(cuid())
+    title       String
+    artist      String
+    album       String
+    thumbnail   String
+    url         String   @unique
+    releaseDate DateTime
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    playlists   Playlist[]
+}
+
+model Playlist {
+    id        String   @id @default(cuid())
+    name      String
+    author    String
+    thumbnail String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    tracks    Track[]
 }
