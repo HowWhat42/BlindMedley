@@ -23,6 +23,15 @@ type Props = {
   };
 };
 
+interface song {
+  title: string;
+  artist: string;
+  album: string;
+  thumbnail: string;
+  releaseDate: Date;
+  url: string;
+}
+
 const PlayPage = ({ playlist }: Props) => {
   const [tracks, setTracks] = useState<any[]>([]);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
@@ -32,6 +41,8 @@ const PlayPage = ({ playlist }: Props) => {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [volume, setVolume] = useState<number>(0.1);
   const [ended, setEnded] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  const [playedTracks, setPlayedTracks] = useState<song[] | []>([]);
 
   if (!playlist) {
     return <div>Loading</div>;
@@ -95,6 +106,7 @@ const PlayPage = ({ playlist }: Props) => {
     if (currentTrackIndex < tracks.length - 1) {
       audio?.pause();
       setAudio(null);
+      setPlayedTracks([...playedTracks, currentTrack]);
       setCurrentTrackIndex(currentTrackIndex + 1);
       setCurrentTrack(tracks[currentTrackIndex + 1]);
       setArtistFound(false);
@@ -108,24 +120,36 @@ const PlayPage = ({ playlist }: Props) => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const artist = textFormater(currentTrack?.artist);
-    const title = textFormater(currentTrack?.title);
+    if (audio) {
+      const artist = textFormater(currentTrack?.artist);
+      const title = textFormater(currentTrack?.title);
+      let multiplier = 1;
 
-    const answer = textFormater(e.currentTarget.answer.value);
-    if (answer === "") return;
-    const artistLv = levenshtein(artist, answer)!;
-    const titleLv = levenshtein(title, answer)!;
-    console.log(artistLv, titleLv);
-    console.log(artistFound, titleFound);
-    if (artistLv < 3) {
-      setArtistFound(true);
+      const answer = textFormater(e.currentTarget.answer.value);
+      if (answer === "") return;
+      const artistLv = levenshtein(artist, answer)!;
+      const titleLv = levenshtein(title, answer)!;
+      if (artistLv < 3) {
+        if (audio.currentTime < 10) {
+          multiplier = 2;
+        } else if (audio.currentTime < 20) {
+          multiplier = 1.5;
+        }
+        setScore(score + 10 * multiplier);
+        setArtistFound(true);
+      }
+      if (titleLv < 3) {
+        if (audio.currentTime < 10) {
+          multiplier = 2;
+        } else if (audio.currentTime < 20) {
+          multiplier = 1.5;
+        }
+        setScore(score + 10 * multiplier);
+        setTitleFound(true);
+      }
+      // TODO If incorrect, show error
+      console.log(artist, title, answer);
     }
-    if (titleLv < 3) {
-      setTitleFound(true);
-    }
-    // TODO If incorrect, show error
-    console.log(artist, title, answer);
-
     e.currentTarget.answer.value = "";
   };
 
@@ -176,6 +200,7 @@ const PlayPage = ({ playlist }: Props) => {
             </form>
           </div>
           <div>
+            <p>Score : {score}</p>
             <p>
               Musique : {currentTrackIndex + 1} / {tracks.length}
             </p>
@@ -185,7 +210,18 @@ const PlayPage = ({ playlist }: Props) => {
           {ended && (
             <div className="w-48">
               <Song song={currentTrack} />
-              <button onClick={nextTrack}>Suivant</button>
+            </div>
+          )}
+          {playedTracks.length > 0 && (
+            <div className="flex flex-col items-center">
+              <h2>Played tracks</h2>
+              <div className="flex flex-wrap justify-center">
+                {playedTracks.map((track) => (
+                  <div className="w-48">
+                    <Song song={track} />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

@@ -18,7 +18,6 @@ const PlaylistPage = ({}: Props) => {
   };
 
   const onPlay = () => {
-    console.log("play");
     router.push(`/play/${playlistId}`);
   };
 

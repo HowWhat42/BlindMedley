@@ -20,7 +20,9 @@ const Timer = ({ audio }: Props) => {
   return (
     <div>
       <ProgressCircle
-        text={`${(30 - audio.currentTime).toFixed(0)}s`}
+        text={`${
+          audio.currentTime <= 30 ? (30 - audio.currentTime).toFixed(0) : 0
+        }s`}
         percentage={(currentTime / audio.duration) * 100}
       />
     </div>
