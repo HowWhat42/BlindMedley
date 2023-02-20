@@ -3,8 +3,6 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import Song from "./Song";
 
-type Props = {};
-
 interface song {
   title: string;
   artist: string;
@@ -14,7 +12,7 @@ interface song {
   url: string;
 }
 
-const PlaylistImporter = (props: Props) => {
+const PlaylistImporter = () => {
   const [songsList, setSongsList] = useState<song[]>([]);
   const getSpotifySongsList = api.spotify.songsList.useMutation();
   const getDeezerSongsList = api.deezer.songsList.useMutation();

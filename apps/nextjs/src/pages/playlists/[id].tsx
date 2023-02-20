@@ -1,20 +1,23 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
 
-type Props = {};
-
-const PlaylistPage = ({}: Props) => {
+const PlaylistPage = () => {
   const router = useRouter();
   const playlistId = router.query.id as string;
   const { data: playlist } = api.playlists.byId.useQuery(playlistId);
   const deletePlaylist = api.playlists.delete.useMutation();
 
   const onDelete = async () => {
-    await deletePlaylist.mutateAsync(playlistId);
-    router.push("/");
+    try {
+      await deletePlaylist.mutateAsync(playlistId);
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onPlay = () => {
@@ -28,7 +31,7 @@ const PlaylistPage = ({}: Props) => {
       </Link>
       {playlist ? (
         <div>
-          <img src={playlist.thumbnail} alt={playlist.name} />
+          <Image src={playlist.thumbnail} alt={playlist.name} />
           <h1>{playlist.name}</h1>
           <h2>{playlist.author}</h2>
           <button onClick={onDelete}>Delete</button>

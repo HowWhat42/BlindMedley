@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 type Props = {
   song: {
@@ -14,7 +15,7 @@ type Props = {
 const Song = ({ song }: Props) => {
   return (
     <div>
-      <img src={song.thumbnail} alt={song.title} />
+      <Image src={song.thumbnail} alt={song.title} />
       <h3>Titre : {song.title}</h3>
       <h4>Artiste : {song.artist}</h4>
       <h5>Album : {song.album}</h5>

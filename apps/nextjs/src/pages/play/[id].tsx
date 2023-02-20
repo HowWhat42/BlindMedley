@@ -44,10 +44,6 @@ const PlayPage = ({ playlist }: Props) => {
   const [score, setScore] = useState<number>(0);
   const [playedTracks, setPlayedTracks] = useState<song[] | []>([]);
 
-  if (!playlist) {
-    return <div>Loading</div>;
-  }
-
   const shuffle = (array: any[]) => {
     let currentIndex = array.length,
       temporaryValue,
@@ -63,6 +59,23 @@ const PlayPage = ({ playlist }: Props) => {
     }
 
     return array;
+  };
+
+  const playPause = async () => {
+    if (audio) {
+      if (audio.paused) {
+        await audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+  };
+
+  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (audio) {
+      audio.volume = Number(e.currentTarget.value) / 100;
+      setVolume(Number(e.currentTarget.value) / 100);
+    }
   };
 
   // Set tracks after playlist is set
@@ -153,22 +166,9 @@ const PlayPage = ({ playlist }: Props) => {
     e.currentTarget.answer.value = "";
   };
 
-  const playPause = () => {
-    if (audio) {
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
-    }
-  };
-
-  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (audio) {
-      audio.volume = Number(e.currentTarget.value) / 100;
-      setVolume(Number(e.currentTarget.value) / 100);
-    }
-  };
+  if (!playlist) {
+    return <div>Loading</div>;
+  }
 
   return (
     <div className="h-screen bg-light">
