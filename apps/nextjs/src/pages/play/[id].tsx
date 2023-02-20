@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { prisma } from "@acme/db";
 
 import { levenshtein, textFormater } from "~/utils/formater";
 import Song from "~/components/Song";
+import Timer from "~/components/Timer";
 
 type Props = {
   playlist: {
@@ -25,8 +26,12 @@ type Props = {
 const PlayPage = ({ playlist }: Props) => {
   const [tracks, setTracks] = useState<any[]>([]);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
   const [artistFound, setArtistFound] = useState<boolean>(false);
   const [titleFound, setTitleFound] = useState<boolean>(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [volume, setVolume] = useState<number>(0.1);
+  const [ended, setEnded] = useState<boolean>(false);
 
   if (!playlist) {
     return <div>Loading</div>;
@@ -49,25 +54,52 @@ const PlayPage = ({ playlist }: Props) => {
     return array;
   };
 
+  // Set tracks after playlist is set
   useEffect(() => {
     setTracks(shuffle(playlist.tracks).slice(0, 10));
-  }, []);
+  }, [playlist]);
 
+  // Set current track after tracks are set
   useEffect(() => {
-    setCurrentTrack(tracks[0]);
+    if (currentTrack) {
+      audio?.pause();
+    }
+    setCurrentTrack(tracks[currentTrackIndex]);
   }, [tracks]);
 
-  const nextTrack = () => {
-    setArtistFound(false);
-    setTitleFound(false);
-    const nextTrack = tracks[1];
-    setCurrentTrack(nextTrack);
-    setTracks(tracks.slice(1));
-  };
+  // Set audio after current track is set
+  useEffect(() => {
+    if (currentTrack) {
+      const audio = new Audio(currentTrack.url);
+      setAudio(audio);
+      audio.volume = volume;
+      audio.play();
 
-  if (artistFound && titleFound) {
-    nextTrack();
-  }
+      audio.addEventListener("ended", () => {
+        setEnded(true);
+      });
+    }
+  }, [currentTrack]);
+
+  useEffect(() => {
+    if (artistFound && titleFound) {
+      nextTrack();
+    }
+  }, [artistFound, titleFound]);
+
+  // Set next track after artist and title are found
+  const nextTrack = () => {
+    if (currentTrackIndex < tracks.length - 1) {
+      setCurrentTrackIndex(currentTrackIndex + 1);
+      setCurrentTrack(tracks[currentTrackIndex + 1]);
+      setArtistFound(false);
+      setTitleFound(false);
+      setEnded(false);
+    } else {
+      // TODO End of playlist
+      console.log("End of playlist");
+    }
+  };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,15 +118,27 @@ const PlayPage = ({ playlist }: Props) => {
     if (titleLv < 3) {
       setTitleFound(true);
     }
-    // TODO If correct, go to next song
     // TODO If incorrect, show error
     console.log(artist, title, answer);
 
     e.currentTarget.answer.value = "";
   };
 
-  const onEnd = () => {
-    nextTrack();
+  const playPause = () => {
+    if (audio) {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+  };
+
+  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (audio) {
+      audio.volume = Number(e.currentTarget.value) / 100;
+      setVolume(Number(e.currentTarget.value) / 100);
+    }
   };
 
   return (
@@ -104,22 +148,43 @@ const PlayPage = ({ playlist }: Props) => {
       </Link>
       <h1>{playlist.name}</h1>
       <h2>{playlist.author}</h2>
-      {/* <div className="grid grid-cols-5 gap-4">
-        {tracks.map((track, idx) => (
-          <Song song={track} key={idx} />
-        ))}
-      </div> */}
-      <div>
-        <form onSubmit={onSubmit}>
-          <audio src={currentTrack?.url} controls autoPlay onEnded={onEnd} />
-          <input name="answer" type="text" />
-          <button>Submit</button>
-        </form>
-      </div>
-      <div>
-        <p>Artist : {artistFound ? "Trouvé" : "Pas encore"}</p>
-        <p>Title : {titleFound ? "Trouvé" : "Pas encore"}</p>
-      </div>
+      {currentTrack && (
+        <div className="flex flex-col items-center">
+          <div>
+            {audio && (
+              <div>
+                <Timer audio={audio} />
+                <button onClick={playPause}>Play</button>
+                <p>Volume : {volume * 100}</p>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  defaultValue={volume * 100}
+                  onChange={changeVolume}
+                />
+              </div>
+            )}
+            <form onSubmit={onSubmit}>
+              <input name="answer" type="text" />
+              <button>Valider</button>
+            </form>
+          </div>
+          <div>
+            <p>
+              Musique : {currentTrackIndex + 1} / {tracks.length}
+            </p>
+            <p>Artist : {artistFound ? "Trouvé" : "Pas encore"}</p>
+            <p>Title : {titleFound ? "Trouvé" : "Pas encore"}</p>
+          </div>
+          {ended && (
+            <div className="w-48">
+              <Song song={currentTrack} />
+              <button onClick={nextTrack}>Suivant</button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

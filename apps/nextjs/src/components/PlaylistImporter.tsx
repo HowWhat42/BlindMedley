@@ -41,10 +41,12 @@ const PlaylistImporter = (props: Props) => {
     if (provider === "deezer") {
       const data = await getDeezerSongsList.mutateAsync(id);
       setSongsList(data);
+      e.currentTarget.reset();
       return;
     } else {
       const data = await getSpotifySongsList.mutateAsync(id);
       setSongsList(data);
+      e.currentTarget.reset();
       return;
     }
   };

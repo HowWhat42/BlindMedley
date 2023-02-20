@@ -48,6 +48,9 @@ export const spotifyRouter = createTRPCRouter({
             previewUrl = track.preview;
           }
         }
+        if (!previewUrl) {
+          return null;
+        }
         // Create the track in the database or update playlist
         return ctx.prisma.track.upsert({
           where: {
