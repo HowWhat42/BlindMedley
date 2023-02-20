@@ -32,6 +32,7 @@ const Circle = ({
       strokeWidth={10}
       strokeDasharray={circumference}
       strokeDashoffset={strokeDashoffset}
+      stroke-linecap="round"
     />
   );
 };

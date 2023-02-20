@@ -11,7 +11,7 @@ export const textFormater = (text: string) => {
   if (text.includes("ft.")) text = text.split("ft.")[0]!;
 
   // Remove everything after " - "
-  if (text.includes(" - ")) text = text.split(" - ")[0]!;
+  if (text.includes("- ")) text = text.split("- ")[0]!;
 
   // Remove ponctuation
   text = text.replace(/[.,\/#!$%\^&\*;:{}=\_`~()]/g, "");

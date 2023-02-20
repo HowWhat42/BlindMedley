@@ -77,6 +77,9 @@ const PlayPage = ({ playlist }: Props) => {
 
       audio.addEventListener("ended", () => {
         setEnded(true);
+        setTimeout(() => {
+          nextTrack();
+        }, 5000);
       });
     }
   }, [currentTrack]);
@@ -90,6 +93,8 @@ const PlayPage = ({ playlist }: Props) => {
   // Set next track after artist and title are found
   const nextTrack = () => {
     if (currentTrackIndex < tracks.length - 1) {
+      audio?.pause();
+      setAudio(null);
       setCurrentTrackIndex(currentTrackIndex + 1);
       setCurrentTrack(tracks[currentTrackIndex + 1]);
       setArtistFound(false);
@@ -155,7 +160,7 @@ const PlayPage = ({ playlist }: Props) => {
               <div>
                 <Timer audio={audio} />
                 <button onClick={playPause}>Play</button>
-                <p>Volume : {volume * 100}</p>
+                <p>Volume : </p>
                 <input
                   type="range"
                   min="0"
