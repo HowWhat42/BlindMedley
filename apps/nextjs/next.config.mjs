@@ -12,6 +12,14 @@ const config = {
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: !!process.env.CI },
   typescript: { ignoreBuildErrors: !!process.env.CI },
+  images: {
+    domains: [
+      "images.unsplash.com",
+      "e-cdns-images.dzcdn.net",
+      "i.scdn.co",
+      "mosaic.scdn.co",
+    ],
+  },
 };
 
 export default config;

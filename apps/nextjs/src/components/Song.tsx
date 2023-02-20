@@ -15,7 +15,7 @@ type Props = {
 const Song = ({ song }: Props) => {
   return (
     <div>
-      <Image src={song.thumbnail} alt={song.title} />
+      <Image src={song.thumbnail} alt={song.title} width={150} height={150} />
       <h3>Titre : {song.title}</h3>
       <h4>Artiste : {song.artist}</h4>
       <h5>Album : {song.album}</h5>

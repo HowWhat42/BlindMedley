@@ -25,13 +25,18 @@ const PlaylistPage = () => {
   };
 
   return (
-    <div className="bg-light">
+    <div className="bg-light h-screen">
       <Link href={"/"}>
         <h2>Back</h2>
       </Link>
       {playlist ? (
         <div>
-          <Image src={playlist.thumbnail} alt={playlist.name} />
+          <Image
+            src={playlist.thumbnail}
+            alt={playlist.name}
+            width={300}
+            height={300}
+          />
           <h1>{playlist.name}</h1>
           <h2>{playlist.author}</h2>
           <button onClick={onDelete}>Delete</button>
