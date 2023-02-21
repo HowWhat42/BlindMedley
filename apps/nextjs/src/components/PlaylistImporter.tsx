@@ -51,9 +51,19 @@ const PlaylistImporter = () => {
 
   return (
     <div>
-      <form onSubmit={importPlaylist}>
-        <input type="text" name="playlistUrl" />
-        <button type="submit">Import</button>
+      <form onSubmit={importPlaylist} className="flex flex-col">
+        <input
+          type="text"
+          name="playlistUrl"
+          placeholder="URL"
+          className="bg-purple-light text-grey placeholder-grey rounded-2xl py-3 px-4 mb-4"
+        />
+        <button
+          type="submit"
+          className="bg-purple text-lg text-grey rounded-2xl py-3 px-4"
+        >
+          Import
+        </button>
       </form>
       <div className="grid grid-cols-6 gap-4">
         {songsList.map((song, idx) => (

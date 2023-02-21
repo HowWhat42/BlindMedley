@@ -11,6 +11,12 @@ module.exports = {
         "purple-light": "#BD7AFF",
         blue: "#0094FF",
       },
+      fontFamily: {
+        oxygen: ["Oxygen", "sans-serif"],
+      },
+      backgroundImage: {
+        "dots-pattern": "url('/dots.svg')",
+      },
     },
   },
   plugins: [],

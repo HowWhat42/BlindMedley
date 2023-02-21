@@ -23,7 +23,8 @@ const Timer = ({ audio }: Props) => {
         text={`${
           audio.currentTime <= 30 ? (30 - audio.currentTime).toFixed(0) : 0
         }s`}
-        percentage={(currentTime / audio.duration) * 100}
+        // percentage={(currentTime / audio.duration) * 100}
+        percentage={40}
       />
     </div>
   );

@@ -17,11 +17,12 @@ const Playlist = ({ playlist }: Props) => {
       <Image
         src={playlist.thumbnail}
         alt={playlist.name}
+        className="rounded-2xl"
         width={300}
         height={300}
       />
-      <h3>{playlist.name}</h3>
-      <h4>{playlist.author}</h4>
+      <h3 className="font-bold text-xl">{playlist.name}</h3>
+      <h4 className="text-sm">{playlist.author}</h4>
     </Link>
   );
 };

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
+import Back from "~/assets/img/back.svg";
 
 const PlaylistPage = () => {
   const router = useRouter();
@@ -25,22 +26,39 @@ const PlaylistPage = () => {
   };
 
   return (
-    <div className="bg-light h-screen">
-      <Link href={"/"}>
-        <h2>Back</h2>
+    <div className="bg-light h-screen bg-dots-pattern bg-no-repeat bg-cover">
+      <Link href={"/"} className="absolute top-3 left-4">
+        <Image src={Back} width={50} height={50} alt="back" />
       </Link>
       {playlist ? (
-        <div>
+        <div className="flex flex-col items-center justify-center pt-6">
+          <h1 className="text-center text-grey text-xl font-normal">
+            {playlist.name}
+          </h1>
+          <h2 className="text-center text-grey text-md font-light">
+            {playlist.author}
+          </h2>
           <Image
             src={playlist.thumbnail}
             alt={playlist.name}
+            className="rounded-2xl my-4"
             width={300}
             height={300}
           />
-          <h1>{playlist.name}</h1>
-          <h2>{playlist.author}</h2>
-          <button onClick={onDelete}>Delete</button>
-          <button onClick={onPlay}>Play</button>
+          <div className="flex gap-4">
+            <button
+              onClick={onDelete}
+              className="border-purple border-2 text-lg text-purple rounded-2xl py-3 px-4"
+            >
+              Supprimer
+            </button>
+            <button
+              onClick={onPlay}
+              className="bg-purple text-lg text-grey rounded-2xl py-3 px-4"
+            >
+              Jouer
+            </button>
+          </div>
         </div>
       ) : (
         <p>Loading</p>

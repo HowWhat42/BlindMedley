@@ -1,10 +1,18 @@
 import { use, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@acme/db";
 
 import { levenshtein, textFormater } from "~/utils/formater";
 import Song from "~/components/Song";
 import Timer from "~/components/Timer";
+import Back from "~/assets/img/back.svg";
+import Check from "~/assets/img/check.svg";
+import Cross from "~/assets/img/cross.svg";
+import Speaker1 from "~/assets/img/speaker1.svg";
+import Speaker2 from "~/assets/img/speaker2.svg";
+import Speaker3 from "~/assets/img/speaker3.svg";
+import Speaker from "~/assets/img/speaker.svg";
 
 type Props = {
   playlist: {
@@ -97,7 +105,7 @@ const PlayPage = ({ playlist }: Props) => {
       const audio = new Audio(currentTrack.url);
       setAudio(audio);
       audio.volume = volume;
-      audio.play();
+      // audio.play();
 
       audio.addEventListener("ended", () => {
         setEnded(true);
@@ -171,41 +179,93 @@ const PlayPage = ({ playlist }: Props) => {
   }
 
   return (
-    <div className="h-screen bg-light">
-      <Link href={"/"}>
-        <h2>Back</h2>
-      </Link>
-      <h1>{playlist.name}</h1>
-      <h2>{playlist.author}</h2>
+    <div className="h-screen bg-light bg-dots-pattern bg-no-repeat bg-cover">
+      <div className="w-full flex justify-center items-center pt-6">
+        <Link href={"/"} className="absolute top-3 left-4">
+          <Image src={Back} width={50} height={50} alt="back" />
+        </Link>
+        <div>
+          <h1 className="text-center text-grey text-xl font-normal">
+            {playlist.name}
+          </h1>
+          <p className="text-center text-grey text-md font-light">
+            {currentTrackIndex + 1} / {tracks.length}
+          </p>
+        </div>
+      </div>
       {currentTrack && (
         <div className="flex flex-col items-center">
           <div>
             {audio && (
-              <div>
+              <div className="flex flex-col items-center">
                 <Timer audio={audio} />
-                <button onClick={playPause}>Play</button>
-                <p>Volume : </p>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  defaultValue={volume * 100}
-                  onChange={changeVolume}
-                />
+                <div className="bg-blue flex items-center justify-center rounded-3xl">
+                  <p className="py-4 px-16 text-light font-bold text-lg">
+                    {score} {score < 2 ? "pt" : "pts"}
+                  </p>
+                </div>
               </div>
             )}
-            <form onSubmit={onSubmit}>
-              <input name="answer" type="text" />
-              <button>Valider</button>
+            <div className="flex mt-4 justify-between">
+              <div className="flex items-center">
+                <p className="text-grey">Artiste</p>
+                <Image
+                  src={artistFound ? Check : Cross}
+                  width={32}
+                  height={32}
+                  alt="artist"
+                />
+              </div>
+              <div className="flex items-center">
+                <p className="text-grey">Titre</p>
+                <Image
+                  src={titleFound ? Check : Cross}
+                  width={32}
+                  height={32}
+                  alt="title"
+                />
+              </div>
+            </div>
+            <form onSubmit={onSubmit} className="flex flex-col my-6">
+              <label htmlFor="answer" className="text-lg text-grey mb-2">
+                Titre / Artiste
+              </label>
+              <input
+                name="answer"
+                type="text"
+                className="bg-purple-light text-grey placeholder-grey rounded-2xl py-3 px-4 mb-4"
+                placeholder="Réponse"
+              />
+              <button className="bg-purple text-lg text-grey rounded-2xl py-3 px-4">
+                Valider
+              </button>
             </form>
           </div>
+          <button onClick={playPause}>Play</button>
           <div>
-            <p>Score : {score}</p>
-            <p>
-              Musique : {currentTrackIndex + 1} / {tracks.length}
-            </p>
-            <p>Artist : {artistFound ? "Trouvé" : "Pas encore"}</p>
-            <p>Title : {titleFound ? "Trouvé" : "Pas encore"}</p>
+            <div className="flex mt-6 gap-2">
+              <Image
+                src={
+                  volume === 0
+                    ? Speaker
+                    : volume < 0.25
+                    ? Speaker1
+                    : volume < 0.75
+                    ? Speaker2
+                    : Speaker3
+                }
+                alt="speaker"
+                width={40}
+                height={40}
+              />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                defaultValue={volume * 100}
+                onChange={changeVolume}
+              />
+            </div>
           </div>
           {ended && (
             <div className="w-48">
@@ -216,9 +276,9 @@ const PlayPage = ({ playlist }: Props) => {
             <div className="flex flex-col items-center">
               <h2>Played tracks</h2>
               <div className="flex flex-wrap justify-center">
-                {playedTracks.map((track) => (
+                {playedTracks.map((track, idx) => (
                   <div className="w-48">
-                    <Song song={track} />
+                    <Song song={track} key={idx} />
                   </div>
                 ))}
               </div>
