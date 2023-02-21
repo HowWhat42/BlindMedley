@@ -53,9 +53,7 @@ const GradientCircle = ({ percentage }: { percentage: number }) => {
           id="nnneon-grad"
           gradientTransform="rotate(27 0.5 0.5)"
         >
-          <stop stopColor="#bd7aff" stopOpacity="1" offset="0%"></stop>
           <stop stopColor="#7D00FA" stopOpacity="1" offset="20%"></stop>
-          <stop stopColor="#7D00FA" stopOpacity="1" offset="30%"></stop>
           <stop stopColor="#0094ff" stopOpacity="1" offset="100%"></stop>
         </linearGradient>
         <filter

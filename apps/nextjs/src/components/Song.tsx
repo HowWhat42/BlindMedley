@@ -10,16 +10,33 @@ type Props = {
     releaseDate: Date;
     url: string;
   };
+  inline?: boolean;
 };
 
-const Song = ({ song }: Props) => {
+const Song = ({ song, inline }: Props) => {
+  // Format the date with Intl.DateTimeFormat
+  const date = new Date(song.releaseDate).getFullYear();
+
   return (
-    <div>
-      <Image src={song.thumbnail} alt={song.title} width={150} height={150} />
-      <h3>Titre : {song.title}</h3>
-      <h4>Artiste : {song.artist}</h4>
-      <h5>Album : {song.album}</h5>
-      {/* <h6>{new Date(song.releaseDate).toDateString()}</h6> */}
+    <div
+      className={`flex ${
+        !inline && "flex-col"
+      } justify-center items-center text-grey mb-4`}
+    >
+      <Image
+        src={song.thumbnail}
+        alt={song.title}
+        className="my-2"
+        width={inline ? 80 : 200}
+        height={inline ? 80 : 200}
+      />
+      <div className="flex flex-col ml-4">
+        <h3 className="text-lg font-bold">{song.title}</h3>
+        <h4 className="text-md font-bold">{song.artist}</h4>
+        <h5 className="text-sm">
+          Album : {song.album} / {date}
+        </h5>
+      </div>
     </div>
   );
 };

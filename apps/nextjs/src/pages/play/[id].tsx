@@ -118,7 +118,9 @@ const PlayPage = ({ playlist }: Props) => {
 
   useEffect(() => {
     if (artistFound && titleFound) {
-      nextTrack();
+      setTimeout(() => {
+        nextTrack();
+      }, 2000);
     }
   }, [artistFound, titleFound]);
 
@@ -150,7 +152,7 @@ const PlayPage = ({ playlist }: Props) => {
       if (answer === "") return;
       const artistLv = levenshtein(artist, answer)!;
       const titleLv = levenshtein(title, answer)!;
-      if (artistLv < 3) {
+      if (artistLv < 3 && !artistFound) {
         if (audio.currentTime < 10) {
           multiplier = 2;
         } else if (audio.currentTime < 20) {
@@ -159,7 +161,7 @@ const PlayPage = ({ playlist }: Props) => {
         setScore(score + 10 * multiplier);
         setArtistFound(true);
       }
-      if (titleLv < 3) {
+      if (titleLv < 3 && !titleFound) {
         if (audio.currentTime < 10) {
           multiplier = 2;
         } else if (audio.currentTime < 20) {
@@ -179,7 +181,7 @@ const PlayPage = ({ playlist }: Props) => {
   }
 
   return (
-    <div className="h-screen bg-light bg-dots-pattern bg-no-repeat bg-cover">
+    <div className="h-full bg-light bg-dots-pattern bg-no-repeat bg-cover">
       <div className="w-full flex justify-center items-center pt-6">
         <Link href={"/"} className="absolute top-3 left-4">
           <Image src={Back} width={50} height={50} alt="back" />
@@ -198,7 +200,7 @@ const PlayPage = ({ playlist }: Props) => {
           <div>
             {audio && (
               <div className="flex flex-col items-center">
-                <Timer audio={audio} />
+                {ended ? <Song song={currentTrack} /> : <Timer audio={audio} />}
                 <div className="bg-blue flex items-center justify-center rounded-3xl">
                   <p className="py-4 px-16 text-light font-bold text-lg">
                     {score} {score < 2 ? "pt" : "pts"}
@@ -233,6 +235,7 @@ const PlayPage = ({ playlist }: Props) => {
               <input
                 name="answer"
                 type="text"
+                autoComplete="off"
                 className="bg-purple-light text-grey placeholder-grey rounded-2xl py-3 px-4 mb-4"
                 placeholder="Réponse"
               />
@@ -267,19 +270,14 @@ const PlayPage = ({ playlist }: Props) => {
               />
             </div>
           </div>
-          {ended && (
-            <div className="w-48">
-              <Song song={currentTrack} />
-            </div>
-          )}
           {playedTracks.length > 0 && (
-            <div className="flex flex-col items-center">
-              <h2>Played tracks</h2>
+            <div className="flex flex-col">
+              <h2 className="font-bold text-lg text-grey">
+                Musiques précédentes :
+              </h2>
               <div className="flex flex-wrap justify-center">
                 {playedTracks.map((track, idx) => (
-                  <div className="w-48">
-                    <Song song={track} key={idx} />
-                  </div>
+                  <Song inline song={track} key={idx} />
                 ))}
               </div>
             </div>
