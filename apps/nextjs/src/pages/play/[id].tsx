@@ -188,7 +188,7 @@ const PlayPage = ({ playlist }: Props) => {
   }
 
   return (
-    <div className="h-full bg-light bg-dots-pattern bg-no-repeat bg-cover">
+    <div className="h-full min-h-screen bg-light bg-dots-pattern bg-no-repeat bg-cover">
       <div className="w-full flex justify-center items-center pt-6">
         <button onClick={onBack} className="absolute top-3 left-4">
           <Image src={Back} width={50} height={50} alt="back" />
@@ -280,7 +280,7 @@ const PlayPage = ({ playlist }: Props) => {
             </div>
           </div>
           {playedTracks.length > 0 && (
-            <div className="flex flex-col">
+            <div className="px-4">
               <h2 className="font-bold text-lg text-grey">
                 Musiques précédentes :
               </h2>
