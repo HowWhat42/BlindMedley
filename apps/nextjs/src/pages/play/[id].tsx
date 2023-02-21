@@ -105,7 +105,7 @@ const PlayPage = ({ playlist }: Props) => {
       const audio = new Audio(currentTrack.url);
       setAudio(audio);
       audio.volume = volume;
-      // audio.play();
+      audio.play();
 
       audio.addEventListener("ended", () => {
         setEnded(true);
