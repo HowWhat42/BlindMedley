@@ -1,6 +1,6 @@
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { prisma } from "@acme/db";
 
 import { levenshtein, textFormater } from "~/utils/formater";
@@ -41,6 +41,7 @@ interface song {
 }
 
 const PlayPage = ({ playlist }: Props) => {
+  const router = useRouter();
   const [tracks, setTracks] = useState<any[]>([]);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
@@ -118,9 +119,10 @@ const PlayPage = ({ playlist }: Props) => {
 
   useEffect(() => {
     if (artistFound && titleFound) {
+      setEnded(true);
       setTimeout(() => {
         nextTrack();
-      }, 2000);
+      }, 1000);
     }
   }, [artistFound, titleFound]);
 
@@ -129,7 +131,7 @@ const PlayPage = ({ playlist }: Props) => {
     if (currentTrackIndex < tracks.length - 1) {
       audio?.pause();
       setAudio(null);
-      setPlayedTracks([...playedTracks, currentTrack]);
+      setPlayedTracks([currentTrack, ...playedTracks]);
       setCurrentTrackIndex(currentTrackIndex + 1);
       setCurrentTrack(tracks[currentTrackIndex + 1]);
       setArtistFound(false);
@@ -176,6 +178,11 @@ const PlayPage = ({ playlist }: Props) => {
     e.currentTarget.answer.value = "";
   };
 
+  const onBack = () => {
+    audio?.pause();
+    router.push("/");
+  };
+
   if (!playlist) {
     return <div>Loading</div>;
   }
@@ -183,9 +190,9 @@ const PlayPage = ({ playlist }: Props) => {
   return (
     <div className="h-full bg-light bg-dots-pattern bg-no-repeat bg-cover">
       <div className="w-full flex justify-center items-center pt-6">
-        <Link href={"/"} className="absolute top-3 left-4">
+        <button onClick={onBack} className="absolute top-3 left-4">
           <Image src={Back} width={50} height={50} alt="back" />
-        </Link>
+        </button>
         <div>
           <h1 className="text-center text-grey text-xl font-normal">
             {playlist.name}
@@ -198,16 +205,18 @@ const PlayPage = ({ playlist }: Props) => {
       {currentTrack && (
         <div className="flex flex-col items-center">
           <div>
-            {audio && (
-              <div className="flex flex-col items-center">
-                {ended ? <Song song={currentTrack} /> : <Timer audio={audio} />}
-                <div className="bg-blue flex items-center justify-center rounded-3xl">
-                  <p className="py-4 px-16 text-light font-bold text-lg">
-                    {score} {score < 2 ? "pt" : "pts"}
-                  </p>
-                </div>
+            <div className="flex flex-col items-center">
+              {ended ? (
+                <Song song={currentTrack} />
+              ) : (
+                audio && <Timer audio={audio} />
+              )}
+              <div className="bg-blue flex items-center justify-center rounded-3xl">
+                <p className="py-4 px-16 text-light font-bold text-lg">
+                  {score} {score < 2 ? "pt" : "pts"}
+                </p>
               </div>
-            )}
+            </div>
             <div className="flex mt-4 justify-between">
               <div className="flex items-center">
                 <p className="text-grey">Artiste</p>
@@ -275,7 +284,7 @@ const PlayPage = ({ playlist }: Props) => {
               <h2 className="font-bold text-lg text-grey">
                 Musiques précédentes :
               </h2>
-              <div className="flex flex-wrap justify-center">
+              <div className="flex flex-col justify-center">
                 {playedTracks.map((track, idx) => (
                   <Song inline song={track} key={idx} />
                 ))}
