@@ -2,11 +2,13 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
 import Back from "~/assets/img/back.svg";
 
 const PlaylistPage = () => {
+  const session = useSession().data;
   const router = useRouter();
   const playlistId = router.query.id as string;
   const { data: playlist } = api.playlists.byId.useQuery(playlistId);
@@ -48,12 +50,14 @@ const PlaylistPage = () => {
             height={300}
           />
           <div className="flex gap-4">
-            <button
-              onClick={onDelete}
-              className="border-purple border-2 text-lg text-purple hover:border-red-500 hover:bg-red-500 hover:text-light rounded-2xl py-3 px-4 transition-all duration-300"
-            >
-              Supprimer
-            </button>
+            {session?.user.role === "ADMIN" && (
+              <button
+                onClick={onDelete}
+                className="border-purple border-2 text-lg text-purple hover:border-red-500 hover:bg-red-500 hover:text-light rounded-2xl py-3 px-4 transition-all duration-300"
+              >
+                Supprimer
+              </button>
+            )}
             <button
               onClick={onPlay}
               className="bg-purple text-lg text-light hover:bg-purple-light rounded-2xl py-3 px-4 transition-all duration-300"

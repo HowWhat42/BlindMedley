@@ -1,6 +1,7 @@
 import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import { prisma } from "@acme/db";
 
 import { levenshtein, textFormater } from "~/utils/formater";
@@ -41,6 +42,7 @@ interface song {
 }
 
 const PlayPage = ({ playlist }: Props) => {
+  const session = useSession().data;
   const router = useRouter();
   const [tracks, setTracks] = useState<any[]>([]);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
@@ -107,7 +109,7 @@ const PlayPage = ({ playlist }: Props) => {
       const audio = new Audio(currentTrack.url);
       setAudio(audio);
       audio.volume = volume;
-      // audio.play();
+      audio.play();
 
       audio.addEventListener("ended", () => {
         setEnded(true);
@@ -284,7 +286,9 @@ const PlayPage = ({ playlist }: Props) => {
                 </button>
               </form>
             </div>
-            <button onClick={playPause}>Play</button>
+            {session?.user.role === "ADMIN" && (
+              <button onClick={playPause}>Play</button>
+            )}
             <div>
               <div className="flex mt-6 gap-2">
                 <Image

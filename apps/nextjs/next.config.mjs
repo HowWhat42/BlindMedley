@@ -18,6 +18,7 @@ const config = {
       "e-cdns-images.dzcdn.net",
       "i.scdn.co",
       "mosaic.scdn.co",
+      "lh3.googleusercontent.com",
     ],
   },
 };
