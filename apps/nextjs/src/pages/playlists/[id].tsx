@@ -14,8 +14,10 @@ const PlaylistPage = () => {
 
   const onDelete = async () => {
     try {
-      await deletePlaylist.mutateAsync(playlistId);
-      router.push("/");
+      if (window.confirm("Voulez-vous vraiment supprimer cette playlist ?")) {
+        await deletePlaylist.mutateAsync(playlistId);
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -48,13 +50,13 @@ const PlaylistPage = () => {
           <div className="flex gap-4">
             <button
               onClick={onDelete}
-              className="border-purple border-2 text-lg text-purple rounded-2xl py-3 px-4"
+              className="border-purple border-2 text-lg text-purple hover:border-red-500 hover:bg-red-500 hover:text-light rounded-2xl py-3 px-4 transition-all duration-300"
             >
               Supprimer
             </button>
             <button
               onClick={onPlay}
-              className="bg-purple text-lg text-grey rounded-2xl py-3 px-4"
+              className="bg-purple text-lg text-light hover:bg-purple-light rounded-2xl py-3 px-4 transition-all duration-300"
             >
               Jouer
             </button>

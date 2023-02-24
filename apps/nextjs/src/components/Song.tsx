@@ -19,9 +19,7 @@ const Song = ({ song, inline }: Props) => {
 
   return (
     <div
-      className={`flex ${
-        !inline && "flex-col"
-      } justify-center items-center text-grey mb-4`}
+      className={`flex ${!inline && "flex-col"} items-center text-grey mb-4`}
     >
       <Image
         src={song.thumbnail}

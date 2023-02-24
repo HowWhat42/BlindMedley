@@ -60,7 +60,7 @@ const PlaylistImporter = () => {
         />
         <button
           type="submit"
-          className="bg-purple text-lg text-grey rounded-2xl py-3 px-4"
+          className="bg-purple text-lg text-light hover:bg-purple-light rounded-2xl py-3 px-4 transition-all duration-300"
         >
           Import
         </button>
